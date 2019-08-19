@@ -45,7 +45,10 @@ class ItemListAdapter(private val dataList: List<ShoppingItem>) :
 
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
         val data = dataList[i]
-        val formattedName = data.name.replace("_", " ").replace("[^A-Za-z ]", "")
+        val re = Regex("[^A-Za-z_ ]")
+        var formattedName = re.replace(data.name, "")
+        formattedName = formattedName.replace("_", " ")
+        //val formattedName = data.name.replace("_", " ").replace("[^A-Za-z ]", "").replace("2", "")
 
         viewHolder.name.text = formattedName
         viewHolder.image.setImageDrawable(context?.getDrawable(data.drawableId))
