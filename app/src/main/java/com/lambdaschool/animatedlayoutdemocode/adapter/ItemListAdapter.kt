@@ -6,6 +6,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -30,6 +32,7 @@ class ItemListAdapter(private val dataList: List<ShoppingItem>) :
     }
 
     private var context: Context? = null
+    private var lastPosition:Int = -1
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val card = view.card_view as CardView
@@ -37,18 +40,22 @@ class ItemListAdapter(private val dataList: List<ShoppingItem>) :
         val name = view.name_text as TextView
     }
 
+
+
+
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         context = viewGroup.context
-        val view = LayoutInflater.from(context).inflate(R.layout.shopping_item_layout, viewGroup, false)
+        val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.shopping_item_layout, viewGroup, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
         val data = dataList[i]
         val re = Regex("[^A-Za-z_ ]")
-        var formattedName = re.replace(data.name, "")
-        formattedName = formattedName.replace("_", " ")
+        val formattedName = re.replace(data.name, "").replace("_", " ")
         //val formattedName = data.name.replace("_", " ").replace("[^A-Za-z ]", "").replace("2", "")
+        //I believed the intention was to strip the numerals from the item names and allow differentiation based on the image.
 
         viewHolder.name.text = formattedName
         viewHolder.image.setImageDrawable(context?.getDrawable(data.drawableId))
@@ -86,6 +93,13 @@ class ItemListAdapter(private val dataList: List<ShoppingItem>) :
                 )
             }
         }
-
+        fun setEnterAnimation (viewToAnimate: View, position: Int){
+            if(position>lastPosition){
+                val animation: Animation = AnimationUtils.loadAnimation(viewToAnimate.context, R.anim.abc_grow_fade_in_from_bottom)
+                viewToAnimate.startAnimation(animation)
+                lastPosition=position
+            }
+        }
+        setEnterAnimation(viewHolder.card,i)
     }
 }
